@@ -1,3 +1,4 @@
+// get element
 const balance = document.getElementById('balance');
 const money_plus = document.getElementById('money-plus');
 const money_minus = document.getElementById('money-minus');
@@ -8,6 +9,7 @@ const amount = document.getElementById('amount');
 const trans = document.getElementById('transaction');
 const category = document.getElementById('category');
 
+//category data
 const categoryData = [
   { transaction: 'expense', category_id: '1', category: 'Food & Beverage' },
   { transaction: 'expense', category_id: '2', category: 'Bills & Utilities' },
@@ -28,27 +30,6 @@ const categoryData = [
   { transaction: 'income', category_id: '17', category: 'Others' },
 ];
 
-// const dummyTransactions = [
-//   { id: 1, text: 'Flower', amount: -20 },
-//   { id: 2, text: 'Salary', amount: 300 },
-//   { id: 3, text: 'Book', amount: -10 },
-//   { id: 4, text: 'Camera', amount: 150 }
-// ];
-
-// select category
-function categoryVal() {
-  category.innerHTML = "<option value='' disabled selected style='display:none;'>Select category...</option>";
-  let count = 0;
-  for (count = 0; count < categoryData.length; count++) {
-    if (trans.value == categoryData[count].transaction) {
-      let option = document.createElement('option');
-      option.value = categoryData[count].category_id;
-      option.innerHTML = categoryData[count].category;
-      category.appendChild(option);
-    }
-  }
-}
-
 // local storage transactions
 const localStorageTransactions = JSON.parse(
   localStorage.getItem('transactions')
@@ -64,6 +45,20 @@ const localStorageUrl = JSON.parse(
 let url =
   localStorage.getItem('url') !== null ? localStorageUrl : '';
 
+// select category
+function categoryVal() {
+  category.innerHTML = "<option value='' disabled selected style='display:none;'>Select category...</option>";
+  let count = 0;
+  for (count = 0; count < categoryData.length; count++) {
+    if (trans.value == categoryData[count].transaction) {
+      let option = document.createElement('option');
+      option.value = categoryData[count].category_id;
+      option.innerHTML = categoryData[count].category;
+      category.appendChild(option);
+    }
+  }
+}
+
 // Add transaction
 function addTransaction(e) {
   e.preventDefault();
@@ -71,10 +66,17 @@ function addTransaction(e) {
   if (text.value.trim() === '' || amount.value.trim() === '' || trans.value.trim() === '' || category.value.trim() === '') {
     alert('Please select transaction type and category or add a text and amount');
   } else {
+    let categName = '';
+    categoryData.forEach(categ => {
+      if (categ.category_id == category.value) {
+        categName = categ.category;
+      }
+    });
     const transaction = {
       id: generateID(),
       type: trans.value,
-      category: category.value,
+      category_id: category.value,
+      category_name: categName,
       text: text.value,
       amount: trans.value == 'expense' ? -amount.value : +amount.value,
     };
@@ -120,7 +122,7 @@ function addTransactionDOM(transaction) {
 
   item.innerHTML = `
     <div class="img">
-      <img src="./icon/${transaction.category}.svg" alt="">
+      <img src="./icon/${transaction.category_id}.svg" alt="">
     </div>
     <div class="info">
       ${cateName}
@@ -129,13 +131,6 @@ function addTransactionDOM(transaction) {
     </div>
     <button class="delete-btn" onclick="removeTransaction(${transaction.id})">x</button>
   `;
-  // item.innerHTML = `
-  //   <img src="/expense-tracker/icon/${transaction.category}.svg" alt="">
-  //   <p>${cateName}</p>
-  //   <small>${transaction.text}</small> 
-  //   <span>${sign}${Math.abs(transaction.amount)}</span> 
-  //   <button class="delete-btn" onclick="removeTransaction(${transaction.id})">x</button>
-  // `;
 
   list.appendChild(item);
 }

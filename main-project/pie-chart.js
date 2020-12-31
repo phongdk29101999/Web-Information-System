@@ -10,15 +10,52 @@ const localStorageUrl = JSON.parse(
     localStorage.getItem('url')
 );
 let url = localStorage.getItem('url') !== null ? localStorageUrl : '';
-  
+
+//set Title
 if (url !== null)
     document.title = url;
+
 var myLegend = document.getElementById("myLegend");
 var myCanvas = document.getElementById("myCanvas");
 myCanvas.width = 400;
 myCanvas.height = 400;
- 
+
 var ctx = myCanvas.getContext("2d");
+var myData = {};
+if (url == "income") {
+    myData = {
+        'Award': 0,
+        'Salary': 0,
+        'Gifts': 0,
+        'Selling': 0,
+        'Interest Money': 0,
+        'Others': 0,
+    };
+} else {
+    myData = {
+        'Food & Beverage': 0,
+        'Bills & Utilities': 0,
+        'Transportation': 0,
+        'Shopping': 0,
+        'Entertainment': 0,
+        'Travel': 0,
+        'Health & Fitness': 0,
+        'Friends & Love': 0,
+        'Family': 0,
+        'Education': 0,
+        'Others': 0,
+    };
+}
+
+transactions.forEach(transaction => {
+    for (data in myData){
+        if (transaction.category_name == data && transaction.type == url){
+            console.log(data);
+            myData[data] += transaction.amount > 0 ? +transaction.amount : -transaction.amount;
+        }
+    }
+});
+console.log(myData);
 var myVinyls = {
     "Classical music": 10,
     "Alternative rock": 14,
@@ -67,6 +104,8 @@ var Piechart = function(options){
         var start_angle = 0;
         for (categ in this.options.data){
             val = this.options.data[categ];
+            if (val == 0)
+                continue;
             var slice_angle = 2 * Math.PI * val / total_value;
             
             drawPieSlice(
@@ -86,16 +125,18 @@ var Piechart = function(options){
         //add label for chart
         start_angle = 0;
         for (categ in this.options.data){
+            if (this.options.data[categ] == 0)
+                continue;
             val = this.options.data[categ];
             slice_angle = 2 * Math.PI * val / total_value;
             var pieRadius = Math.min(this.canvas.width/2,this.canvas.height/2);
-            var labelX = this.canvas.width/2 + (pieRadius) * Math.cos(start_angle + slice_angle/2);
-            var labelY = this.canvas.height/2 + (pieRadius) * Math.sin(start_angle + slice_angle/2);
+            var labelX = this.canvas.width/2 + (pieRadius*8/9) * Math.cos(start_angle + slice_angle/2);
+            var labelY = this.canvas.height/2 + (pieRadius*8/9) * Math.sin(start_angle + slice_angle/2);
             var labelText = Math.round(100 * val / total_value);
             var lineXs = this.canvas.width/2 + (pieRadius/4) * Math.cos(start_angle + slice_angle/2);
             var lineYs = this.canvas.height/2 + (pieRadius/4) * Math.sin(start_angle + slice_angle/2);
-            var lineXe = this.canvas.width/2 + (pieRadius*7/8) * Math.cos(start_angle + slice_angle/2);
-            var lineYe = this.canvas.height/2 + (pieRadius*7/8) * Math.sin(start_angle + slice_angle/2);
+            var lineXe = this.canvas.width/2 + (pieRadius*5/6) * Math.cos(start_angle + slice_angle/2);
+            var lineYe = this.canvas.height/2 + (pieRadius*5/6) * Math.sin(start_angle + slice_angle/2);
 
             this.ctx.fillStyle = "black";
             this.ctx.font = "bold 20px Arial";
@@ -110,6 +151,8 @@ var Piechart = function(options){
             var legendHTML = "";
 
             for (categ in this.options.data){
+                if (this.options.data[categ] == 0)
+                    continue;
                 legendHTML += "<div><span style='display:inline-block;width:20px;background-color:"+this.colors[color_index++]+";'>&nbsp;</span> "+categ+"</div>";
             }
  
@@ -121,7 +164,7 @@ var Piechart = function(options){
 var myPiechart = new Piechart(
     {
         canvas:myCanvas,
-        data:myVinyls,
+        data:myData,
         colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
         legend:myLegend,
     }
