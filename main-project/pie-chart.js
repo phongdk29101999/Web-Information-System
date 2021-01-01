@@ -15,10 +15,13 @@ let url = localStorage.getItem('url') !== null ? localStorageUrl : '';
 if (url !== null)
     document.title = url;
 
+function backHome() {
+    window.location.href = 'index.html';
+}
 var myLegend = document.getElementById("myLegend");
 var myCanvas = document.getElementById("myCanvas");
-myCanvas.width = 400;
-myCanvas.height = 400;
+myCanvas.width = 500;
+myCanvas.height = 500;
 
 var ctx = myCanvas.getContext("2d");
 var myData = {};
@@ -55,13 +58,8 @@ transactions.forEach(transaction => {
         }
     }
 });
-console.log(myData);
-var myVinyls = {
-    "Classical music": 10,
-    "Alternative rock": 14,
-    "Pop": 2,
-    "Jazz": 12
-};
+// console.log(myData);
+
 function drawLine(ctx, startX, startY, endX, endY){
     ctx.beginPath();
     ctx.moveTo(startX,startY);
@@ -112,7 +110,7 @@ var Piechart = function(options){
                 this.ctx,
                 this.canvas.width/2,
                 this.canvas.height/2,
-                Math.min(this.canvas.width/4,this.canvas.height/4),
+                Math.min(this.canvas.width/5,this.canvas.height/5),
                 start_angle,
                 start_angle+slice_angle,
                 this.colors[color_index%this.colors.length]
@@ -130,13 +128,17 @@ var Piechart = function(options){
             val = this.options.data[categ];
             slice_angle = 2 * Math.PI * val / total_value;
             var pieRadius = Math.min(this.canvas.width/2,this.canvas.height/2);
-            var labelX = this.canvas.width/2 + (pieRadius*8/9) * Math.cos(start_angle + slice_angle/2);
-            var labelY = this.canvas.height/2 + (pieRadius*8/9) * Math.sin(start_angle + slice_angle/2);
+            var labelX = this.canvas.width/2 + (pieRadius*9/10) * Math.cos(start_angle + slice_angle/2);
+            var labelY = this.canvas.height/2 + (pieRadius*9/10) * Math.sin(start_angle + slice_angle/2);
             var labelText = Math.round(100 * val / total_value);
-            var lineXs = this.canvas.width/2 + (pieRadius/4) * Math.cos(start_angle + slice_angle/2);
-            var lineYs = this.canvas.height/2 + (pieRadius/4) * Math.sin(start_angle + slice_angle/2);
-            var lineXe = this.canvas.width/2 + (pieRadius*5/6) * Math.cos(start_angle + slice_angle/2);
-            var lineYe = this.canvas.height/2 + (pieRadius*5/6) * Math.sin(start_angle + slice_angle/2);
+            var lineXs = this.canvas.width/2 + (pieRadius/5) * Math.cos(start_angle + slice_angle/2);
+            var lineYs = this.canvas.height/2 + (pieRadius/5) * Math.sin(start_angle + slice_angle/2);
+            var lineXe = this.canvas.width/2 + (pieRadius*3/4) * Math.cos(start_angle + slice_angle/2);
+            var lineYe = this.canvas.height/2 + (pieRadius*3/4) * Math.sin(start_angle + slice_angle/2);
+            // var iconX = this.canvas.width/2 + (pieRadius/5) * Math.cos(start_angle + slice_angle/2);
+            // var iconY = this.canvas.height/2 + (pieRadius/5) * Math.sin(start_angle + slice_angle/2);
+            // var iconDirtyX = this.canvas.width/2 + (pieRadius/5) * Math.cos(start_angle + slice_angle/2);
+            // var iconDirtyY = this.canvas.height/2 + (pieRadius/5) * Math.sin(start_angle + slice_angle/2);
 
             this.ctx.fillStyle = "black";
             this.ctx.font = "bold 20px Arial";
