@@ -107,15 +107,6 @@ function addTransactionDOM(transaction) {
   const sign = transaction.type == 'expense' ? '-' : '+';
 
   const item = document.createElement('li');
-
-  //get category name
-  let cateName = "";
-  let count = 0;
-  for (count = 0; count < categoryData.length; count++) {
-    if (categoryData[count].category_id == transaction.category) {
-      cateName = categoryData[count].category;
-    }
-  }
   
   // Add class based on value
   item.classList.add(transaction.amount < 0 ? 'minus' : 'plus');
@@ -125,7 +116,7 @@ function addTransactionDOM(transaction) {
       <img src="./icon/${transaction.category_id}.svg" alt="">
     </div>
     <div class="info">
-      ${cateName}
+      ${transaction.category_name}
       <span class="num">${sign}${Math.abs(transaction.amount)}</span> 
       <small class="des">${transaction.text}</small> 
     </div>
