@@ -1,8 +1,14 @@
 //get element
+var chart = document.getElementsByClassName("chart");
 var incomeLegend = document.getElementById("incomeLegend");
 var incomeCanvas = document.getElementById("incomeCanvas");
 var expenseLegend = document.getElementById("expenseLegend");
 var expenseCanvas = document.getElementById("expenseCanvas");
+
+if (localStorage.getItem('transactions') === null || transactions.length === 0) {
+    chart[0].style.display = "none";
+    chart[1].style.display = "none";
+}
 
 // set height, width
 incomeCanvas.width = 300;
@@ -34,22 +40,23 @@ var expenseData = {
     'Others': 0,
 };
 
+function resetData(myData) {
+    for (data in myData){
+        myData[data] = 0;
+    }
+}
+
 function loadData(myData, type) {
     transactions.forEach(transaction => {
         for (data in myData){
             if (transaction.category_name == data && transaction.type == type){
-                console.log(data);
                 myData[data] += transaction.amount > 0 ? +transaction.amount : -transaction.amount;
             }
         }
     });
 }
 
-loadData(incomeData, "income");
-loadData(expenseData, "expense");
-
-// console.log(incomeData);
-
+//draw canvas
 function drawLine(ctx, startX, startY, endX, endY){
     ctx.beginPath();
     ctx.moveTo(startX,startY);
@@ -58,22 +65,17 @@ function drawLine(ctx, startX, startY, endX, endY){
     ctx.strokeStyle = '#999';
     ctx.stroke();
 }
-function drawArc(ctx, centerX, centerY, radius, startAngle, endAngle){
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-    ctx.stroke();
-}
+
 function drawPieSlice(ctx,centerX, centerY, radius, startAngle, endAngle, color ){
     ctx.fillStyle = color;
-    // ctx.lineWidth = 1;
-    // ctx.strokeStyle = '#333';
     ctx.beginPath();
     ctx.moveTo(centerX,centerY);
     ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-    // ctx.stroke();
     ctx.closePath();
     ctx.fill();
 }
+
+// piechart
 var Piechart = function(options){
     this.options = options;
     this.canvas = options.canvas;
@@ -82,6 +84,7 @@ var Piechart = function(options){
  
     // draw pie chart
     this.draw = function(){
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         var total_value = 0;
         var color_index = 0;
         for (var categ in this.options.data){
@@ -125,14 +128,10 @@ var Piechart = function(options){
             var lineYs = this.canvas.height/2 + (pieRadius/5) * Math.sin(start_angle + slice_angle/2);
             var lineXe = this.canvas.width/2 + (pieRadius*3/4) * Math.cos(start_angle + slice_angle/2);
             var lineYe = this.canvas.height/2 + (pieRadius*3/4) * Math.sin(start_angle + slice_angle/2);
-            // var iconX = this.canvas.width/2 + (pieRadius/5) * Math.cos(start_angle + slice_angle/2);
-            // var iconY = this.canvas.height/2 + (pieRadius/5) * Math.sin(start_angle + slice_angle/2);
-            // var iconDirtyX = this.canvas.width/2 + (pieRadius/5) * Math.cos(start_angle + slice_angle/2);
-            // var iconDirtyY = this.canvas.height/2 + (pieRadius/5) * Math.sin(start_angle + slice_angle/2);
 
             this.ctx.fillStyle = "black";
             this.ctx.font = "bold 20px Arial";
-            this.ctx.fillText(labelText+"%", labelX,labelY);
+            this.ctx.fillText(labelText+"%", labelX,labelY, 25);
             drawLine(this.ctx, lineXs, lineYs, lineXe, lineYe)
             start_angle += slice_angle;
         }
@@ -149,17 +148,29 @@ var Piechart = function(options){
             }
  
             this.options.legend.innerHTML = legendHTML;
- 
         }
     }
 }
 
+// init chart
 function initChart() {
+    if (localStorage.getItem('transactions') !== null && transactions.length != 0) {
+        chart[0].style.display = "flex";
+        chart[1].style.display = "flex";
+    } else {
+        chart[0].style.display = "none";
+        chart[1].style.display = "none";
+    }
+    resetData(incomeData);
+    resetData(expenseData);
+    loadData(incomeData, "income");
+    loadData(expenseData, "expense");
+    
     var incomePiechart = new Piechart(
         {
             canvas:incomeCanvas,
             data:incomeData,
-            colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
+            colors:["#fde23e","#f16e23", "#57d9ff","#937e88","#84df8a", "#d00000","#ffdddd", "#eeffcc", "#335566", "#1387c4", "#992040", "#afa4b3", "#ffaa22"],
             legend:incomeLegend,
         }
     );
@@ -170,7 +181,7 @@ function initChart() {
         {
             canvas:expenseCanvas,
             data:expenseData,
-            colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
+            colors:["#fde23e","#f16e23", "#57d9ff","#937e88","#84df8a", "#d00000","#ffdddd", "#eeffcc", "#335566", "#1387c4", "#992040", "#afa4b3", "#ffaa22"],
             legend:expenseLegend,
         }
     );
@@ -180,10 +191,5 @@ function initChart() {
 
 initChart();
 
-function updateChart() {
-    loadData(incomeData, "income");
-    loadData(expenseData, "expense");
-    initChart();
-}
-
-form.addEventListener('submit', updateChart);
+// update chart when add data
+form.addEventListener('submit', initChart);
