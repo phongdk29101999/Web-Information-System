@@ -1,7 +1,7 @@
 var myLegend = document.getElementById("myLegend");
 var myCanvas = document.getElementById("myCanvas");
-myCanvas.width = 500;
-myCanvas.height = 500;
+myCanvas.width = 300;
+myCanvas.height = 300;
  
 var ctx = myCanvas.getContext("2d");
 var myVinyls = {

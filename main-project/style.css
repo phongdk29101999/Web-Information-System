@@ -21,7 +21,7 @@ body {
 
 .container {
   margin: 30px auto;
-  width: 350px;
+  width: 1000px;
 }
 
 h1 {
@@ -52,7 +52,6 @@ h4 {
 .inc-exp-container > div {
   flex: 1;
   text-align: center;
-  cursor: pointer;
 }
 
 .inc-exp-container > div:first-of-type {
@@ -180,7 +179,7 @@ select#transaction, #category {
 .list .info {
   margin-left: 0;
   font-weight: 600;
-  width: 300px;
+  width: 950px;
 }
 .list .des {
   display: block;
@@ -192,4 +191,41 @@ select#transaction, #category {
 
 .list span.num {
   float: right;
+}
+
+.dropdown-btn {
+  cursor: pointer;
+}
+
+.dropdown-container {
+  display: none;
+}
+
+.chart {
+  height: max-content;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Lato', sans-serif;
+}
+
+.chart #incomeCanvas {
+  width: 300px;
+  height: 300px;
+}
+
+.chart #expenseCanvas {
+  width: 300px;
+  height: 300px;
+}
+
+.chart #incomeLegend > div {
+  align-items: left;
+  text-align: left;
+}
+
+.chart #expenseLegend > div {
+  align-items: left;
+  text-align: left;
 }
