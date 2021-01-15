@@ -1,64 +1,54 @@
-// local storage transactions
-const localStorageTransactions = JSON.parse(
-    localStorage.getItem('transactions')
-);
+//get element
+var incomeLegend = document.getElementById("incomeLegend");
+var incomeCanvas = document.getElementById("incomeCanvas");
+var expenseLegend = document.getElementById("expenseLegend");
+var expenseCanvas = document.getElementById("expenseCanvas");
 
-let transactions = localStorage.getItem('transactions') !== null ? localStorageTransactions : [];
+// set height, width
+incomeCanvas.width = 300;
+incomeCanvas.height = 300;
+expenseCanvas.width = 300;
+expenseCanvas.height = 300;
 
-//local storage url
-const localStorageUrl = JSON.parse(
-    localStorage.getItem('url')
-);
-let url = localStorage.getItem('url') !== null ? localStorageUrl : '';
+// data
+var incomeData = {
+    'Award': 0,
+    'Salary': 0,
+    'Gifts': 0,
+    'Selling': 0,
+    'Interest Money': 0,
+    'Others': 0,
+};
 
-//set Title
-if (url !== null)
-    document.title = url;
+var expenseData = {
+    'Food & Beverage': 0,
+    'Bills & Utilities': 0,
+    'Transportation': 0,
+    'Shopping': 0,
+    'Entertainment': 0,
+    'Travel': 0,
+    'Health & Fitness': 0,
+    'Friends & Love': 0,
+    'Family': 0,
+    'Education': 0,
+    'Others': 0,
+};
 
-function backHome() {
-    window.location.href = 'index.html';
-}
-var myLegend = document.getElementById("myLegend");
-var myCanvas = document.getElementById("myCanvas");
-myCanvas.width = 500;
-myCanvas.height = 500;
-
-var ctx = myCanvas.getContext("2d");
-var myData = {};
-if (url == "income") {
-    myData = {
-        'Award': 0,
-        'Salary': 0,
-        'Gifts': 0,
-        'Selling': 0,
-        'Interest Money': 0,
-        'Others': 0,
-    };
-} else {
-    myData = {
-        'Food & Beverage': 0,
-        'Bills & Utilities': 0,
-        'Transportation': 0,
-        'Shopping': 0,
-        'Entertainment': 0,
-        'Travel': 0,
-        'Health & Fitness': 0,
-        'Friends & Love': 0,
-        'Family': 0,
-        'Education': 0,
-        'Others': 0,
-    };
-}
-
-transactions.forEach(transaction => {
-    for (data in myData){
-        if (transaction.category_name == data && transaction.type == url){
-            console.log(data);
-            myData[data] += transaction.amount > 0 ? +transaction.amount : -transaction.amount;
+function loadData(myData, type) {
+    transactions.forEach(transaction => {
+        for (data in myData){
+            if (transaction.category_name == data && transaction.type == type){
+                console.log(data);
+                myData[data] += transaction.amount > 0 ? +transaction.amount : -transaction.amount;
+            }
         }
-    }
-});
-// console.log(myData);
+    });
+}
+
+loadData(incomeData, "income");
+loadData(expenseData, "expense");
+
+// console.log(incomeData);
 
 function drawLine(ctx, startX, startY, endX, endY){
     ctx.beginPath();
@@ -163,13 +153,37 @@ var Piechart = function(options){
         }
     }
 }
-var myPiechart = new Piechart(
-    {
-        canvas:myCanvas,
-        data:myData,
-        colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
-        legend:myLegend,
-    }
-);
 
-myPiechart.draw();
+function initChart() {
+    var incomePiechart = new Piechart(
+        {
+            canvas:incomeCanvas,
+            data:incomeData,
+            colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
+            legend:incomeLegend,
+        }
+    );
+    
+    incomePiechart.draw();
+    
+    var expensePiechart = new Piechart(
+        {
+            canvas:expenseCanvas,
+            data:expenseData,
+            colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
+            legend:expenseLegend,
+        }
+    );
+    
+    expensePiechart.draw();
+}
+
+initChart();
+
+function updateChart() {
+    loadData(incomeData, "income");
+    loadData(expenseData, "expense");
+    initChart();
+}
+
+form.addEventListener('submit', updateChart);
