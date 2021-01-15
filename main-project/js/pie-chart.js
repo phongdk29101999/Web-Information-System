@@ -4,7 +4,7 @@ var incomeLegend = document.getElementById("incomeLegend");
 var incomeCanvas = document.getElementById("incomeCanvas");
 var expenseLegend = document.getElementById("expenseLegend");
 var expenseCanvas = document.getElementById("expenseCanvas");
-console.log(localStorage.getItem('transactions'));
+
 if (localStorage.getItem('transactions') === null || transactions.length === 0) {
     chart[0].style.display = "none";
     chart[1].style.display = "none";
@@ -56,8 +56,7 @@ function loadData(myData, type) {
     });
 }
 
-// console.log(incomeData);
-
+//draw canvas
 function drawLine(ctx, startX, startY, endX, endY){
     ctx.beginPath();
     ctx.moveTo(startX,startY);
@@ -66,22 +65,17 @@ function drawLine(ctx, startX, startY, endX, endY){
     ctx.strokeStyle = '#999';
     ctx.stroke();
 }
-function drawArc(ctx, centerX, centerY, radius, startAngle, endAngle){
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-    ctx.stroke();
-}
+
 function drawPieSlice(ctx,centerX, centerY, radius, startAngle, endAngle, color ){
     ctx.fillStyle = color;
-    // ctx.lineWidth = 1;
-    // ctx.strokeStyle = '#333';
     ctx.beginPath();
     ctx.moveTo(centerX,centerY);
     ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-    // ctx.stroke();
     ctx.closePath();
     ctx.fill();
 }
+
+// piechart
 var Piechart = function(options){
     this.options = options;
     this.canvas = options.canvas;
@@ -134,10 +128,6 @@ var Piechart = function(options){
             var lineYs = this.canvas.height/2 + (pieRadius/5) * Math.sin(start_angle + slice_angle/2);
             var lineXe = this.canvas.width/2 + (pieRadius*3/4) * Math.cos(start_angle + slice_angle/2);
             var lineYe = this.canvas.height/2 + (pieRadius*3/4) * Math.sin(start_angle + slice_angle/2);
-            // var iconX = this.canvas.width/2 + (pieRadius/5) * Math.cos(start_angle + slice_angle/2);
-            // var iconY = this.canvas.height/2 + (pieRadius/5) * Math.sin(start_angle + slice_angle/2);
-            // var iconDirtyX = this.canvas.width/2 + (pieRadius/5) * Math.cos(start_angle + slice_angle/2);
-            // var iconDirtyY = this.canvas.height/2 + (pieRadius/5) * Math.sin(start_angle + slice_angle/2);
 
             this.ctx.fillStyle = "black";
             this.ctx.font = "bold 20px Arial";
@@ -158,11 +148,11 @@ var Piechart = function(options){
             }
  
             this.options.legend.innerHTML = legendHTML;
- 
         }
     }
 }
 
+// init chart
 function initChart() {
     if (localStorage.getItem('transactions') !== null && transactions.length != 0) {
         chart[0].style.display = "flex";
@@ -201,4 +191,5 @@ function initChart() {
 
 initChart();
 
+// update chart when add data
 form.addEventListener('submit', initChart);
