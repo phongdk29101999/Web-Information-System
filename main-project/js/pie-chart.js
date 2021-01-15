@@ -1,8 +1,14 @@
 //get element
+var chart = document.getElementsByClassName("chart");
 var incomeLegend = document.getElementById("incomeLegend");
 var incomeCanvas = document.getElementById("incomeCanvas");
 var expenseLegend = document.getElementById("expenseLegend");
 var expenseCanvas = document.getElementById("expenseCanvas");
+
+if (localStorage.getItem('transactions') === null) {
+    chart[0].style.display = "none";
+    chart[1].style.display = "none";
+}
 
 // set height, width
 incomeCanvas.width = 300;
@@ -34,19 +40,21 @@ var expenseData = {
     'Others': 0,
 };
 
+function resetData(myData) {
+    for (data in myData){
+        myData[data] = 0;
+    }
+}
+
 function loadData(myData, type) {
     transactions.forEach(transaction => {
         for (data in myData){
             if (transaction.category_name == data && transaction.type == type){
-                console.log(data);
                 myData[data] += transaction.amount > 0 ? +transaction.amount : -transaction.amount;
             }
         }
     });
 }
-
-loadData(incomeData, "income");
-loadData(expenseData, "expense");
 
 // console.log(incomeData);
 
@@ -82,6 +90,7 @@ var Piechart = function(options){
  
     // draw pie chart
     this.draw = function(){
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         var total_value = 0;
         var color_index = 0;
         for (var categ in this.options.data){
@@ -155,6 +164,15 @@ var Piechart = function(options){
 }
 
 function initChart() {
+    if (localStorage.getItem('transactions') !== null) {
+        chart[0].style.display = "flex";
+        chart[1].style.display = "flex";
+    }
+    resetData(incomeData);
+    resetData(expenseData);
+    loadData(incomeData, "income");
+    loadData(expenseData, "expense");
+    
     var incomePiechart = new Piechart(
         {
             canvas:incomeCanvas,
@@ -180,10 +198,4 @@ function initChart() {
 
 initChart();
 
-function updateChart() {
-    loadData(incomeData, "income");
-    loadData(expenseData, "expense");
-    initChart();
-}
-
-form.addEventListener('submit', updateChart);
+form.addEventListener('submit', initChart);

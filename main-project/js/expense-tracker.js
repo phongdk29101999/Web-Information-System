@@ -164,6 +164,7 @@ function removeTransaction(id) {
   updateLocalStorage();
 
   init();
+  initChart();
 }
 
 // Update local storage transactions
