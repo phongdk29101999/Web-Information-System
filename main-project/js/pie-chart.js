@@ -4,8 +4,8 @@ var incomeLegend = document.getElementById("incomeLegend");
 var incomeCanvas = document.getElementById("incomeCanvas");
 var expenseLegend = document.getElementById("expenseLegend");
 var expenseCanvas = document.getElementById("expenseCanvas");
-
-if (localStorage.getItem('transactions') === null) {
+console.log(localStorage.getItem('transactions'));
+if (localStorage.getItem('transactions') === null || transactions.length === 0) {
     chart[0].style.display = "none";
     chart[1].style.display = "none";
 }
@@ -141,7 +141,7 @@ var Piechart = function(options){
 
             this.ctx.fillStyle = "black";
             this.ctx.font = "bold 20px Arial";
-            this.ctx.fillText(labelText+"%", labelX,labelY);
+            this.ctx.fillText(labelText+"%", labelX,labelY, 25);
             drawLine(this.ctx, lineXs, lineYs, lineXe, lineYe)
             start_angle += slice_angle;
         }
@@ -164,9 +164,12 @@ var Piechart = function(options){
 }
 
 function initChart() {
-    if (localStorage.getItem('transactions') !== null) {
+    if (localStorage.getItem('transactions') !== null && transactions.length != 0) {
         chart[0].style.display = "flex";
         chart[1].style.display = "flex";
+    } else {
+        chart[0].style.display = "none";
+        chart[1].style.display = "none";
     }
     resetData(incomeData);
     resetData(expenseData);
@@ -177,7 +180,7 @@ function initChart() {
         {
             canvas:incomeCanvas,
             data:incomeData,
-            colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
+            colors:["#fde23e","#f16e23", "#57d9ff","#937e88","#84df8a", "#d00000","#ffdddd", "#eeffcc", "#335566", "#1387c4", "#992040", "#afa4b3", "#ffaa22"],
             legend:incomeLegend,
         }
     );
@@ -188,7 +191,7 @@ function initChart() {
         {
             canvas:expenseCanvas,
             data:expenseData,
-            colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
+            colors:["#fde23e","#f16e23", "#57d9ff","#937e88","#84df8a", "#d00000","#ffdddd", "#eeffcc", "#335566", "#1387c4", "#992040", "#afa4b3", "#ffaa22"],
             legend:expenseLegend,
         }
     );
